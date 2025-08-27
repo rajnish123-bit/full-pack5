@@ -12,6 +12,9 @@ import LoaderUI from "@/components/LoaderUI";
 import { Loader2Icon, Sun, Moon } from "lucide-react";
 import MeetingCard from "@/components/MeetingCard";
 import Chatbot from "@/components/Chatbot";
+import ResumeAnalyzer from "@/components/ResumeAnalyzer";
+import MockInterviewSimulator from "@/components/MockInterviewSimulator";
+import InterviewAnalytics from "@/components/InterviewAnalytics";
 
 export default function Home() {
   const router = useRouter();
@@ -20,6 +23,7 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<"start" | "join">();
   const [darkMode, setDarkMode] = useState(true); // Toggle state for dark/light mode
+  const [activeAIFeature, setActiveAIFeature] = useState<"chatbot" | "resume" | "mock" | "analytics" | null>(null);
 
   const handleQuickAction = (title: string) => {
     switch (title) {
@@ -37,6 +41,58 @@ export default function Home() {
   };
 
   if (isLoading) return <LoaderUI />;
+
+  // If an AI feature is active, show only that feature
+  if (activeAIFeature === "resume") {
+    return (
+      <div>
+        <div className="container max-w-7xl mx-auto p-6">
+          <Button 
+            onClick={() => setActiveAIFeature(null)} 
+            variant="outline" 
+            className="mb-4"
+          >
+            ← Back to Dashboard
+          </Button>
+        </div>
+        <ResumeAnalyzer />
+      </div>
+    );
+  }
+
+  if (activeAIFeature === "mock") {
+    return (
+      <div>
+        <div className="container max-w-7xl mx-auto p-6">
+          <Button 
+            onClick={() => setActiveAIFeature(null)} 
+            variant="outline" 
+            className="mb-4"
+          >
+            ← Back to Dashboard
+          </Button>
+        </div>
+        <MockInterviewSimulator />
+      </div>
+    );
+  }
+
+  if (activeAIFeature === "analytics") {
+    return (
+      <div>
+        <div className="container max-w-7xl mx-auto p-6">
+          <Button 
+            onClick={() => setActiveAIFeature(null)} 
+            variant="outline" 
+            className="mb-4"
+          >
+            ← Back to Dashboard
+          </Button>
+        </div>
+        <InterviewAnalytics />
+      </div>
+    );
+  }
 
   return (
     <div >
@@ -67,10 +123,85 @@ export default function Home() {
                 />
               ))}
             </div>
-            <div className="mt-10">
-          <Chatbot />
-        </div>
+            
+            {/* AI Features Section */}
+            <div className="mt-10 space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold mb-4">🤖 AI-Powered Interview Preparation</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card 
+                    className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+                    onClick={() => setActiveAIFeature("resume")}
+                  >
+                    <CardContent className="p-6 text-center">
+                      <div className="w-12 h-12 mx-auto mb-4 bg-blue-500/10 rounded-full flex items-center justify-center">
+                        <span className="text-2xl">📄</span>
+                      </div>
+                      <h3 className="font-semibold text-lg mb-2">Resume Analyzer</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Upload your resume and get personalized interview questions with AI analysis
+                      </p>
+                    </CardContent>
+                  </Card>
 
+                  <Card 
+                    className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+                    onClick={() => setActiveAIFeature("mock")}
+                  >
+                    <CardContent className="p-6 text-center">
+                      <div className="w-12 h-12 mx-auto mb-4 bg-green-500/10 rounded-full flex items-center justify-center">
+                        <span className="text-2xl">🎭</span>
+                      </div>
+                      <h3 className="font-semibold text-lg mb-2">Mock Interview</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Practice with AI-powered mock interviews and get real-time feedback
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card 
+                    className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:border-primary/50"
+                    onClick={() => setActiveAIFeature("analytics")}
+                  >
+                    <CardContent className="p-6 text-center">
+                      <div className="w-12 h-12 mx-auto mb-4 bg-purple-500/10 rounded-full flex items-center justify-center">
+                        <span className="text-2xl">📊</span>
+                      </div>
+                      <h3 className="font-semibold text-lg mb-2">Performance Analytics</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Track your progress with detailed analytics and improvement insights
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+              
+              {/* Chatbot Section */}
+              {activeAIFeature === "chatbot" || activeAIFeature === null ? (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-2xl font-bold">💬 AI Interview Assistant</h2>
+                    {activeAIFeature !== "chatbot" && (
+                      <Button 
+                        onClick={() => setActiveAIFeature("chatbot")} 
+                        variant="outline"
+                      >
+                        Expand Chatbot
+                      </Button>
+                    )}
+                    {activeAIFeature === "chatbot" && (
+                      <Button 
+                        onClick={() => setActiveAIFeature(null)} 
+                        variant="outline"
+                      >
+                        Minimize
+                      </Button>
+                    )}
+                  </div>
+                  <Chatbot />
+                </div>
+              )}
+            </div>
             <MeetingModal
               isOpen={showModal}
               onClose={() => setShowModal(false)}
@@ -103,12 +234,9 @@ export default function Home() {
               )}
               
             </div>
-            
           </>
         )}
 
-        {/* AI ENGLISH ASSISTANT CHATBOT */}
-        
       </div>
     </div>
   );
